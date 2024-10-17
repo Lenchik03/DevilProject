@@ -1,0 +1,6 @@
+@Devil_sOffice_HostAddress = http://localhost:5073
+
+GET {{Devil_sOffice_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
