@@ -38,5 +38,12 @@ namespace Devil_sOffice.Controllers
             await _context.SaveChangesAsync();
             return Ok("Стеллаж умер!");
         }
+
+        [HttpPost("GetRacks")]
+        public async Task<List<Rack>> GetRacks()
+        {
+            List<Rack> racks = _context.Racks.OrderBy(c => c.Id).ToList();
+            return racks;
+        }
     }
 }

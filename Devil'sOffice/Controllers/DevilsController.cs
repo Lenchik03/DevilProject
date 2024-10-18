@@ -34,11 +34,16 @@ namespace Devil_sOffice.Controllers
         [HttpPost("DeleteDevil")]
         public async Task<ActionResult> DeleteDevil(Devil devil)
         {
-            Disposal disposal = (Disposal)_context.Disposals.Where(c => c.Title == devil.Nick && c.Year == devil.Year);
-            _context.Disposals.Add(disposal);
             _context.Devils.Remove(devil);
             await _context.SaveChangesAsync();
             return Ok("Дьявол стёрся!");
+        }
+
+        [HttpPost("GetDevils")]
+        public async Task<List<Devil>> GetDevils()
+        {
+            List<Devil> devils = _context.Devils.OrderBy(c => c.Id).ToList();
+            return devils;
         }
     }
 }
