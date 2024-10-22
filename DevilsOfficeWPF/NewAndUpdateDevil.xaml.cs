@@ -102,7 +102,7 @@ namespace DevilsOfficeWPF
             }
             else
             {
-                string arg = JsonSerializer.Serialize(Devils);
+                string arg = JsonSerializer.Serialize(Devil);
                 var responce = await httpClient.PostAsync($"Devils/UpdateDevil",
                     new StringContent(arg, Encoding.UTF8, "application/json"));
 

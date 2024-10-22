@@ -27,4 +27,9 @@ public partial class Rack
     public int CurrentCount { get; set; }
 
     public virtual Devil IdDevilNavigation { get; set; } = null!;
+
+    //public override string ToString()
+    //{
+    //    return $"Название {Title}, Ответственный {IdDevilNavigation?.Nick}";
+    //}
 }

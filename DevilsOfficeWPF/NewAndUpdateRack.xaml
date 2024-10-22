@@ -6,7 +6,19 @@
         xmlns:local="clr-namespace:DevilsOfficeWPF"
         mc:Ignorable="d"
         Title="NewAndUpdateRack" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+    <StackPanel>
+        <StackPanel Margin="30">
+            <Label Content="Название"/>
+            <TextBox Text="{Binding Rack.Title}"/>
+            <Label Content="Дата покупки"/>
+            <TextBox Text="{Binding Rack.YearBuy}" />
+            <Label Content="Кол-во использований"/>
+            <TextBox Text="{Binding Rack.CurrentCount}" />
+            <Label Content="Макс. кол-во использований"/>
+            <TextBox Text="{Binding Rack.UseCount}" />
+            <Label Content="Ответственный"/>
+            <ComboBox ItemsSource="{Binding Devils}" SelectedItem="{Binding SelectedDevil}" Width="100" HorizontalAlignment="Left" DisplayMemberPath="Nick"/>
+            <Button Content="Отправить" Click="SaveClick" Width="60"/>
+        </StackPanel>
+    </StackPanel>
 </Window>

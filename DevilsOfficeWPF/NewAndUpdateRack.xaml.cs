@@ -1,7 +1,13 @@
-﻿using System;
+﻿using Devil_sOffice;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,11 +23,106 @@ namespace DevilsOfficeWPF
     /// <summary>
     /// Логика взаимодействия для NewAndUpdateRack.xaml
     /// </summary>
-    public partial class NewAndUpdateRack : Window
+    public partial class NewAndUpdateRack : Window, INotifyPropertyChanged
     {
+        HttpClient httpClient = new HttpClient();
+
+        public Rack Rack { get; set; } = new Rack();
+
+        public Devil SelectedDevil { get; set; }
+
+        private List<Devil> devils;
+        public List<Devil> Devils
+        {
+            get => devils;
+            set
+            {
+                devils = value;
+                Signal();
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        void Signal([CallerMemberName] string prop = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+
         public NewAndUpdateRack()
         {
             InitializeComponent();
+            httpClient.BaseAddress = new Uri("http://localhost:5073/api/");
+            DataContext = this;
+            UpdateList();
+        }
+
+        
+
+        public NewAndUpdateRack(Rack rack)
+        {
+            InitializeComponent();
+            Rack = rack;
+            httpClient.BaseAddress = new Uri("http://localhost:5073/api/");
+            DataContext = this;
+            UpdateList();
+        }
+
+        private async void UpdateList()
+        {
+            string arg = JsonSerializer.Serialize(Devils);
+            var responce = await httpClient.PostAsync($"Devils/GetDevils",
+                new StringContent(arg, Encoding.UTF8, "application/json"));
+
+            if (responce.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var result = await responce.Content.ReadAsStringAsync();
+                return;
+            }
+            else
+            {
+                Devils = await responce.Content.ReadFromJsonAsync<List<Devil>>();
+                //MessageBox.Show("Всё ОК");
+            }
+        }
+
+        private async void SaveClick(object sender, RoutedEventArgs e)
+        {
+            
+
+            if (Rack.Id == 0)
+            {
+                Rack.IdDevil = SelectedDevil.Id;
+                Rack.IdDevilNavigation = SelectedDevil;
+                string arg = JsonSerializer.Serialize(Rack);
+                var responce = await httpClient.PostAsync($"Racks/AddRack",
+                    new StringContent(arg, Encoding.UTF8, "application/json"));
+
+                if (responce.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    var result = await responce.Content.ReadAsStringAsync();
+                    return;
+                }
+                else
+                {
+                    //Devils = await responce.Content.ReadFromJsonAsync<List<Devil>>();
+                    MessageBox.Show("Всё ОК");
+                }
+            }
+            else
+            {
+                string arg = JsonSerializer.Serialize(Rack);
+                var responce = await httpClient.PostAsync($"Racks/UpdateRack",
+                    new StringContent(arg, Encoding.UTF8, "application/json"));
+
+                if (responce.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    var result = await responce.Content.ReadAsStringAsync();
+                    return;
+                }
+                else
+                {
+                    //Devils = await responce.Content.ReadFromJsonAsync<List<Devil>>();
+                    MessageBox.Show("Всё ОК");
+                }
+            }
         }
     }
 }

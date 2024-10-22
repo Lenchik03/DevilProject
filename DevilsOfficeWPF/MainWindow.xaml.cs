@@ -54,7 +54,7 @@ namespace DevilsOfficeWPF
 
         HttpClient httpClient = new HttpClient();
 
-        public DispatcherTimer timer;
+       
 
         public event PropertyChangedEventHandler? PropertyChanged;
         void Signal([CallerMemberName] string prop = null)
@@ -63,12 +63,14 @@ namespace DevilsOfficeWPF
         public MainWindow()
         {
             InitializeComponent();
+            options = new JsonSerializerOptions { ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles };
             httpClient.BaseAddress = new Uri("http://localhost:5073/api/");
             DataContext = this;
             UpdateList();
 
         }
 
+        JsonSerializerOptions options = new JsonSerializerOptions();
         public async void UpdateList()
         {
             string arg = JsonSerializer.Serialize(Devils);
@@ -86,7 +88,7 @@ namespace DevilsOfficeWPF
                 //MessageBox.Show("Всё ОК");
             }
 
-            string arg1 = JsonSerializer.Serialize(Devils);
+            string arg1 = JsonSerializer.Serialize(Racks);
             var responce1 = await httpClient.PostAsync($"Racks/GetRacks",
                 new StringContent(arg1, Encoding.UTF8, "application/json"));
 
@@ -98,6 +100,7 @@ namespace DevilsOfficeWPF
             else
             {
                 Racks = await responce1.Content.ReadFromJsonAsync<List<Rack>>();
+                
                 //MessageBox.Show("Всё ОК");
             }
 
@@ -111,7 +114,7 @@ namespace DevilsOfficeWPF
 
         private void UpdateRack(object sender, RoutedEventArgs e)
         {
-            NewAndUpdateRack newAndUpdateRack = new NewAndUpdateRack();
+            NewAndUpdateRack newAndUpdateRack = new NewAndUpdateRack(Rack);
             newAndUpdateRack.ShowDialog();
         }
 

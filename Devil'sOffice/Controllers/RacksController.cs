@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Devil_sOffice.Controllers
 {
@@ -16,9 +17,17 @@ namespace Devil_sOffice.Controllers
         [HttpPost("AddRack")]
         public async Task<ActionResult> AddRack(Rack rack)
         {
-            _context.Racks.Add(rack);
-            await _context.SaveChangesAsync();
-            return Ok("Стеллаж создан!");
+            try
+            {
+                rack.IdDevilNavigation = null;
+                _context.Racks.Add(rack);
+                await _context.SaveChangesAsync();
+                return Ok("Стеллаж создан!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         [HttpPost("UpdateRack")]
@@ -42,7 +51,7 @@ namespace Devil_sOffice.Controllers
         [HttpPost("GetRacks")]
         public async Task<List<Rack>> GetRacks()
         {
-            List<Rack> racks = _context.Racks.OrderBy(c => c.Id).ToList();
+            List<Rack> racks = _context.Racks.Include(s => s.IdDevilNavigation).OrderBy(c => c.Id).ToList();
             return racks;
         }
     }

@@ -24,7 +24,7 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Название" DisplayMemberBinding="{Binding Title}" />
-                    <GridViewColumn Header="Ответсвенный" DisplayMemberBinding="{Binding IdDevilNavigation}"/>
+                    <GridViewColumn Header="Ответсвенный" DisplayMemberBinding="{Binding IdDevilNavigation.Nick}"/>
                     <GridViewColumn Header="Год покупки" DisplayMemberBinding="{Binding YearBuy}"/>
                     <GridViewColumn Header="Кол-во использований" DisplayMemberBinding="{Binding CurrentCount}"/>
                     <GridViewColumn Header="Макс. кол-во использований" DisplayMemberBinding="{Binding UseCount}"/>
