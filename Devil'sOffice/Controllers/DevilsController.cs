@@ -34,7 +34,13 @@ namespace Devil_sOffice.Controllers
         [HttpPost("DeleteDevil")]
         public async Task<ActionResult> DeleteDevil(Devil devil)
         {
-            _context.Devils.Remove(devil);
+            var devilRacks = _context.Racks.Where(s => s.IdDevil == devil.Id).ToList();
+            foreach (var s in devilRacks)
+            {
+                s.IdDevil = 38;
+            }
+            var o = _context.Devils.Find(devil.Id);
+            _context.Devils.Remove(o);
             await _context.SaveChangesAsync();
             return Ok("Дьявол стёрся!");
         }

@@ -10,7 +10,7 @@
         <StackPanel Margin="30">
             <Label Content="Название"/>
             <TextBox Text="{Binding Rack.Title}"/>
-            <Label Content="Дата покупки"/>
+            <Label Content="Год покупки"/>
             <TextBox Text="{Binding Rack.YearBuy}" />
             <Label Content="Кол-во использований"/>
             <TextBox Text="{Binding Rack.CurrentCount}" />

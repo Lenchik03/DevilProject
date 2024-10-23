@@ -24,9 +24,10 @@ namespace DevilsOfficeWPF
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        public Rack Rack { get; set; } = new();
+        public Rack Rack { get; set; }
 
-        public Devil Devil { get; set; } = new();
+        public Devil Devil { get; set; }
+        public DispatcherTimer timer;
 
         private List<Devil> devils;
 
@@ -67,13 +68,28 @@ namespace DevilsOfficeWPF
             httpClient.BaseAddress = new Uri("http://localhost:5073/api/");
             DataContext = this;
             UpdateList();
+            TimerStart();
 
         }
 
         JsonSerializerOptions options = new JsonSerializerOptions();
+
+        public void TimerStart()
+        {
+            timer = new DispatcherTimer();
+            timer.Tick += new EventHandler(TimerTick);
+            timer.Interval = new TimeSpan(0, 0, 15);
+            timer.Start();
+        }
+
+        private void TimerTick(object sender, EventArgs e)
+        {
+            Thread thread = new Thread(UpdateList);
+            thread.Start();
+        }
         public async void UpdateList()
         {
-            string arg = JsonSerializer.Serialize(Devils);
+            string arg = JsonSerializer.Serialize(Devils, options);
             var responce = await httpClient.PostAsync($"Devils/GetDevils",
                 new StringContent(arg, Encoding.UTF8, "application/json"));
 
@@ -88,7 +104,7 @@ namespace DevilsOfficeWPF
                 //MessageBox.Show("Всё ОК");
             }
 
-            string arg1 = JsonSerializer.Serialize(Racks);
+            string arg1 = JsonSerializer.Serialize(Racks, options);
             var responce1 = await httpClient.PostAsync($"Racks/GetRacks",
                 new StringContent(arg1, Encoding.UTF8, "application/json"));
 
@@ -120,7 +136,7 @@ namespace DevilsOfficeWPF
 
         private async void DeleteRack(object sender, RoutedEventArgs e)
         {
-            string arg = JsonSerializer.Serialize(Rack);
+            string arg = JsonSerializer.Serialize((RackBl)Rack, options);
             var responce = await httpClient.PostAsync($"Disposals/DisposalRack",
                 new StringContent(arg, Encoding.UTF8, "application/json"));
 
@@ -135,9 +151,8 @@ namespace DevilsOfficeWPF
                 MessageBox.Show("Сообщение отправлено");
             }
 
-            string arg1 = JsonSerializer.Serialize(Rack);
             var responce1 = await httpClient.PostAsync($"Racks/DeleteRack",
-                new StringContent(arg1, Encoding.UTF8, "application/json"));
+                new StringContent(arg, Encoding.UTF8, "application/json"));
 
             if (responce1.StatusCode != System.Net.HttpStatusCode.OK)
             {
@@ -165,14 +180,27 @@ namespace DevilsOfficeWPF
 
         private async void DeleteDevil(object sender, RoutedEventArgs e)
         {
-            
-            string arg = JsonSerializer.Serialize(Devil);
+            string arg = JsonSerializer.Serialize(Devil, options);
             var responce = await httpClient.PostAsync($"Disposals/DisposalDevil",
                 new StringContent(arg, Encoding.UTF8, "application/json"));
 
             if (responce.StatusCode != System.Net.HttpStatusCode.OK)
             {
                 var result = await responce.Content.ReadAsStringAsync();
+                return;
+            }
+            else
+            {
+                //var answer = await responce.Content.ReadFromJsonAsync<Passport>();
+                MessageBox.Show("Сообщение отправлено");
+            }
+
+            var responce1 = await httpClient.PostAsync($"Devils/DeleteDevil",
+                new StringContent(arg, Encoding.UTF8, "application/json"));
+
+            if (responce.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var result = await responce1.Content.ReadAsStringAsync();
                 return;
             }
             else

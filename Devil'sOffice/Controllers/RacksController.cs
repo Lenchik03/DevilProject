@@ -39,11 +39,10 @@ namespace Devil_sOffice.Controllers
         }
 
         [HttpPost("DeleteRack")]
-        public async Task<ActionResult> DeleteRack(Rack rack)
+        public async Task<ActionResult> DeleteRack(RackBl rack)
         {
-            Disposal disposal = (Disposal)_context.Disposals.Where(c => c.Title == rack.Title && c.Year == rack.YearBuy);
-            _context.Disposals.Add(disposal);
-            _context.Racks.Remove(rack);
+            var o = _context.Racks.Find(rack.Id);
+            _context.Racks.Remove(o);
             await _context.SaveChangesAsync();
             return Ok("Стеллаж умер!");
         }

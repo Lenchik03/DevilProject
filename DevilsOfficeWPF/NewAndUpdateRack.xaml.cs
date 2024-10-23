@@ -17,6 +17,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace DevilsOfficeWPF
 {
@@ -41,6 +42,7 @@ namespace DevilsOfficeWPF
                 Signal();
             }
         }
+        
 
         public event PropertyChangedEventHandler? PropertyChanged;
         void Signal([CallerMemberName] string prop = null)
@@ -63,7 +65,11 @@ namespace DevilsOfficeWPF
             httpClient.BaseAddress = new Uri("http://localhost:5073/api/");
             DataContext = this;
             UpdateList();
+            
+
         }
+
+        
 
         private async void UpdateList()
         {
@@ -86,11 +92,11 @@ namespace DevilsOfficeWPF
         private async void SaveClick(object sender, RoutedEventArgs e)
         {
             
-
+  Rack.IdDevil = SelectedDevil.Id;
+                Rack.IdDevilNavigation = SelectedDevil;
             if (Rack.Id == 0)
             {
-                Rack.IdDevil = SelectedDevil.Id;
-                Rack.IdDevilNavigation = SelectedDevil;
+              
                 string arg = JsonSerializer.Serialize(Rack);
                 var responce = await httpClient.PostAsync($"Racks/AddRack",
                     new StringContent(arg, Encoding.UTF8, "application/json"));

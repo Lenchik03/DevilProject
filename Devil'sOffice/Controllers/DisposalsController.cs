@@ -23,7 +23,7 @@ namespace Devil_sOffice.Controllers
         }
 
         [HttpPost("DisposalRack")]
-        public async Task<ActionResult> DisposalRack(Rack rack)
+        public async Task<ActionResult> DisposalRack(RackBl rack)
         {
             Disposal disposal = new Disposal { Title = rack.Title, Year = rack.YearBuy };
             _context.Disposals.Add(disposal);
