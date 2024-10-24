@@ -82,6 +82,9 @@ namespace DevilsOfficeWPF
 
         private async void SaveClick(object sender, RoutedEventArgs e)
         {
+            if (Devil == null)
+               return;
+
             if (Devil.Id == 0)
             {
                 

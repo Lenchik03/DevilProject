@@ -1,6 +1,7 @@
 ﻿using Devil_sOffice;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
@@ -30,10 +31,20 @@ namespace DevilsOfficeWPF
 
         public Rack Rack { get; set; } = new Rack();
 
-        public Devil SelectedDevil { get; set; }
+        public Devil SelectedDevil
+        {
+            get => selectedDevil;
+            set
+            { 
+                selectedDevil = value;
+                Signal();
+            }
+        }
 
-        private List<Devil> devils;
-        public List<Devil> Devils
+        private ObservableCollection<Devil> devils;
+        private Devil selectedDevil;
+
+        public ObservableCollection<Devil> Devils
         {
             get => devils;
             set
@@ -84,51 +95,68 @@ namespace DevilsOfficeWPF
             }
             else
             {
-                Devils = await responce.Content.ReadFromJsonAsync<List<Devil>>();
+                Devils = await responce.Content.ReadFromJsonAsync<ObservableCollection<Devil>>();
                 //MessageBox.Show("Всё ОК");
+                if (Rack == null)
+                {
+                    return;
+                }
+                SelectedDevil = Devils.FirstOrDefault(s => s.Id == Rack.IdDevil);
             }
         }
 
         private async void SaveClick(object sender, RoutedEventArgs e)
         {
-            
-  Rack.IdDevil = SelectedDevil.Id;
-                Rack.IdDevilNavigation = SelectedDevil;
-            if (Rack.Id == 0)
-            {
-              
-                string arg = JsonSerializer.Serialize(Rack);
-                var responce = await httpClient.PostAsync($"Racks/AddRack",
-                    new StringContent(arg, Encoding.UTF8, "application/json"));
+            if (Rack == null)
+                return;
+            if (SelectedDevil == null)
+            { 
+                Rack.IdDevil = 38;
+                Rack.IdDevilNavigation = Devils.FirstOrDefault(s => s.Id == 38);
+            }
 
-                if (responce.StatusCode != System.Net.HttpStatusCode.OK)
+                if (SelectedDevil != null)
                 {
-                    var result = await responce.Content.ReadAsStringAsync();
-                    return;
+                    Rack.IdDevil = SelectedDevil.Id;
+                    Rack.IdDevilNavigation = SelectedDevil;
+                }
+           
+                if (Rack.Id == 0)
+                {
+                    string arg = JsonSerializer.Serialize(Rack);
+                    var responce = await httpClient.PostAsync($"Racks/AddRack",
+                        new StringContent(arg, Encoding.UTF8, "application/json"));
+
+                    if (responce.StatusCode != System.Net.HttpStatusCode.OK)
+                    {
+                        var result = await responce.Content.ReadAsStringAsync();
+                        return;
+                    }
+                    else
+                    {
+                        //Devils = await responce.Content.ReadFromJsonAsync<List<Devil>>();
+                        MessageBox.Show("Всё ОК");
+                    }
                 }
                 else
                 {
-                    //Devils = await responce.Content.ReadFromJsonAsync<List<Devil>>();
-                    MessageBox.Show("Всё ОК");
-                }
-            }
-            else
-            {
-                string arg = JsonSerializer.Serialize(Rack);
-                var responce = await httpClient.PostAsync($"Racks/UpdateRack",
-                    new StringContent(arg, Encoding.UTF8, "application/json"));
+                    string arg = JsonSerializer.Serialize(Rack);
+                    var responce = await httpClient.PostAsync($"Racks/UpdateRack",
+                        new StringContent(arg, Encoding.UTF8, "application/json"));
 
-                if (responce.StatusCode != System.Net.HttpStatusCode.OK)
-                {
-                    var result = await responce.Content.ReadAsStringAsync();
-                    return;
-                }
-                else
-                {
-                    //Devils = await responce.Content.ReadFromJsonAsync<List<Devil>>();
-                    MessageBox.Show("Всё ОК");
+                    if (responce.StatusCode != System.Net.HttpStatusCode.OK)
+                    {
+                        var result = await responce.Content.ReadAsStringAsync();
+                        return;
+                    }
+                    else
+                    {
+                        //Devils = await responce.Content.ReadFromJsonAsync<List<Devil>>();
+                        MessageBox.Show("Всё ОК");
+                    }
                 }
             }
-        }
+        
+        
     }
 }

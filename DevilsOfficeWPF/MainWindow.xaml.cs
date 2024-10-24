@@ -130,39 +130,53 @@ namespace DevilsOfficeWPF
 
         private void UpdateRack(object sender, RoutedEventArgs e)
         {
-            NewAndUpdateRack newAndUpdateRack = new NewAndUpdateRack(Rack);
-            newAndUpdateRack.ShowDialog();
+            if (Rack == null)
+            {
+                MessageBox.Show("Вы не выбрали стеллаж");
+            }
+            else
+            {
+                NewAndUpdateRack newAndUpdateRack = new NewAndUpdateRack(Rack);
+                newAndUpdateRack.ShowDialog();
+            }
         }
 
         private async void DeleteRack(object sender, RoutedEventArgs e)
         {
-            string arg = JsonSerializer.Serialize((RackBl)Rack, options);
-            var responce = await httpClient.PostAsync($"Disposals/DisposalRack",
-                new StringContent(arg, Encoding.UTF8, "application/json"));
-
-            if (responce.StatusCode != System.Net.HttpStatusCode.OK)
+            if (Devil == null)
             {
-                var result = await responce.Content.ReadAsStringAsync();
-                return;
+                MessageBox.Show("Вы не выбрали стеллаж");
             }
             else
             {
-                //var answer = await responce.Content.ReadFromJsonAsync<Passport>();
-                MessageBox.Show("Сообщение отправлено");
-            }
+                string arg = JsonSerializer.Serialize((RackBl)Rack, options);
+                var responce = await httpClient.PostAsync($"Disposals/DisposalRack",
+                    new StringContent(arg, Encoding.UTF8, "application/json"));
 
-            var responce1 = await httpClient.PostAsync($"Racks/DeleteRack",
-                new StringContent(arg, Encoding.UTF8, "application/json"));
+                if (responce.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    var result = await responce.Content.ReadAsStringAsync();
+                    return;
+                }
+                else
+                {
+                    //var answer = await responce.Content.ReadFromJsonAsync<Passport>();
+                    MessageBox.Show("Сообщение отправлено");
+                }
 
-            if (responce1.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                var result = await responce1.Content.ReadAsStringAsync();
-                return;
-            }
-            else
-            {
-                //var answer = await responce.Content.ReadFromJsonAsync<Passport>();
-                MessageBox.Show("Сообщение отправлено");
+                var responce1 = await httpClient.PostAsync($"Racks/DeleteRack",
+                    new StringContent(arg, Encoding.UTF8, "application/json"));
+
+                if (responce1.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    var result = await responce1.Content.ReadAsStringAsync();
+                    return;
+                }
+                else
+                {
+                    //var answer = await responce.Content.ReadFromJsonAsync<Passport>();
+                    MessageBox.Show("Сообщение отправлено");
+                }
             }
         }
 
@@ -174,39 +188,53 @@ namespace DevilsOfficeWPF
 
         private void UpdateDevil(object sender, RoutedEventArgs e)
         {
-            NewAndUpdateDevil newAndUpdateDevil = new NewAndUpdateDevil(Devil);
-            newAndUpdateDevil.ShowDialog();
+            if (Devil == null)
+            {
+                MessageBox.Show("Вы не выбрали сотрудника");
+            }
+            else
+            {
+                NewAndUpdateDevil newAndUpdateDevil = new NewAndUpdateDevil(Devil);
+                newAndUpdateDevil.ShowDialog();
+            }
         }
 
         private async void DeleteDevil(object sender, RoutedEventArgs e)
         {
-            string arg = JsonSerializer.Serialize(Devil, options);
-            var responce = await httpClient.PostAsync($"Disposals/DisposalDevil",
-                new StringContent(arg, Encoding.UTF8, "application/json"));
-
-            if (responce.StatusCode != System.Net.HttpStatusCode.OK)
+            if (Devil == null)
             {
-                var result = await responce.Content.ReadAsStringAsync();
-                return;
+                MessageBox.Show("Вы не выбрали сотрудника");
             }
             else
             {
-                //var answer = await responce.Content.ReadFromJsonAsync<Passport>();
-                MessageBox.Show("Сообщение отправлено");
-            }
+                string arg = JsonSerializer.Serialize(Devil, options);
+                var responce = await httpClient.PostAsync($"Disposals/DisposalDevil",
+                    new StringContent(arg, Encoding.UTF8, "application/json"));
 
-            var responce1 = await httpClient.PostAsync($"Devils/DeleteDevil",
-                new StringContent(arg, Encoding.UTF8, "application/json"));
+                if (responce.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    var result = await responce.Content.ReadAsStringAsync();
+                    return;
+                }
+                else
+                {
+                    //var answer = await responce.Content.ReadFromJsonAsync<Passport>();
+                    MessageBox.Show("Сообщение отправлено");
+                }
 
-            if (responce.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                var result = await responce1.Content.ReadAsStringAsync();
-                return;
-            }
-            else
-            {
-                //var answer = await responce.Content.ReadFromJsonAsync<Passport>();
-                MessageBox.Show("Сообщение отправлено");
+                var responce1 = await httpClient.PostAsync($"Devils/DeleteDevil",
+                    new StringContent(arg, Encoding.UTF8, "application/json"));
+
+                if (responce.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    var result = await responce1.Content.ReadAsStringAsync();
+                    return;
+                }
+                else
+                {
+                    //var answer = await responce.Content.ReadFromJsonAsync<Passport>();
+                    MessageBox.Show("Сообщение отправлено");
+                }
             }
         }
     }
